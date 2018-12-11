@@ -9,7 +9,6 @@
 
 <script>
 import WE_CHAT_CONFIG from 'OAUTH'
-// import { fetchAccessToken } from 'API'
 
 export default {
   computed: {

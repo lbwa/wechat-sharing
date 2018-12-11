@@ -4,6 +4,7 @@ const __DEV__ = process.env.NODE_ENV === 'development'
 // https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
 const DEV_CONFIG = {
   APP_ID: 'wx9ccba482c3f0c7f3',
+  APP_SECRET: '284e6840bd0fdeee9f4a667c091578a9',
   REDIRECT_URL: 'https://rest.mny9.com/app/#/auth',
   /*
     * 应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid）
