@@ -5,7 +5,8 @@ const __DEV__ = process.env.NODE_ENV === 'development'
 const DEV_CONFIG = {
   APP_ID: 'wx9ccba482c3f0c7f3',
   APP_SECRET: '284e6840bd0fdeee9f4a667c091578a9',
-  REDIRECT_URL: 'https://rest.mny9.com/app/#/auth',
+  // ! 注：REDIRECT_URL 此处必须正确填写协议，尽管在微信后台不需要填写协议
+  REDIRECT_URL: 'http://22993k92h8.51mypc.cn:37148/#/auth',
   /*
     * 应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid）
     * ，snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且，

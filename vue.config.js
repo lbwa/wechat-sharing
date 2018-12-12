@@ -12,6 +12,10 @@ module.exports = {
         'API': path.resolve(PATH.SOURCE_PATH, './api'),
         'OAUTH': path.resolve(PATH.SOURCE_PATH, '../config/OAuth')
       }
+    },
+    // ! 当执行内网穿透将内网的 IP 映射到外网时，需配置此项来避免返回 Invalid host header
+    devServer: {
+      disableHostCheck: true
     }
   }
 }
