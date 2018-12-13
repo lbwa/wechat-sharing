@@ -10,3 +10,16 @@ export function fetchAccessToken (code) {
     project: 'WEB_SC'
   }))
 }
+
+export function fetchSDKAccess (url) {
+  return fetch('http://10.12.16.114/api/signature', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      url
+    })
+  })
+    .then(res => res.json())
+}
