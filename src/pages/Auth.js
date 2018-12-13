@@ -1,4 +1,4 @@
-// 微信网页授权获取 code 的 redirect_url 页面
+// 微信网页授权获取 code 的 redirect_url 页面，本路由用于调整 url
 export default {
   computed: {
     // 分离 url 中的 code 查询字符串
@@ -7,10 +7,17 @@ export default {
     }
   },
 
+  methods: {
+    reloadPage () {
+      // 调整 url 为标准 hash 路由，传递 code 至新页面
+      window.location.href = window.location.href
+        .replace(/\/\?/, '/#/activity?') // 插入 hash 路由标识
+        .replace(/#\/auth$/, '') // 移除末尾的 hash 路由标识
+    }
+  },
+
   mounted () {
-    console.log('[OAuth]: current code', this.code)
-    // 排出 hash 路由的影响，传递 code 至新页面
-    this.$router.push(`/activity?code=${this.code}`)
+    this.reloadPage()
   },
 
   render (h) {
