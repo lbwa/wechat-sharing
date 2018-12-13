@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import WE_CHAT_CONFIG from 'OAUTH'
+import WE_CHAT_CONFIG, { CODE_TEMPLATE } from 'OAUTH'
 
 export default {
   computed: {
@@ -16,7 +16,12 @@ export default {
       return process.env.NODE_ENV === 'development'
     },
     authCode () {
-      return `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WE_CHAT_CONFIG.APP_ID}&redirect_uri=${encodeURIComponent(WE_CHAT_CONFIG.REDIRECT_URL)}&response_type=code&scope=${WE_CHAT_CONFIG.SCOPE}&state=manniu#wechat_redirect`
+      return CODE_TEMPLATE
+        .replace(/APPID/, WE_CHAT_CONFIG.APP_ID)
+        .replace(
+          /REDIRECT_URI/, encodeURIComponent(WE_CHAT_CONFIG.REDIRECT_URL)
+        )
+        .replace(/SCOPE/, WE_CHAT_CONFIG.SCOPE)
     }
   },
 

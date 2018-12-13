@@ -1,7 +1,9 @@
 <template>
   <section class="pages__activity">
     <p>这是活动正文内容</p>
-    <code>{{code}}</code>
+    <code>current code: {{code}}</code>
+    <p>current url: <strong>{{href}}</strong></p>
+    <p>current openid: {{openid}}</p>
   </section>
 </template>
 
@@ -10,15 +12,17 @@ import { fetchAccessToken, fetchSDKAccess } from 'API'
 import { codeFromStorage } from 'UTILS/storage'
 import wx from 'wx'
 
-const __DEV__ = process.env.NODE_ENV === 'development'
-
 export default {
   name: 'activity',
 
   data () {
     return {
       accessToken: '',
-      openid: '' // 用于判断分享链接的来源用户
+      // 用户唯一标识，请注意，在未关注公众号时，用户访问公众号的网页，也会产生一个用户
+      // 和公众号唯一的 openid（详见链接 **第二步** 返回数据参数中的描述）
+      // https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
+      openid: '',
+      href: window.location.href
     }
   },
 
@@ -37,6 +41,66 @@ export default {
     isValidCachedCode () {
       const cachedCode = codeFromStorage.getItem()
       return cachedCode && (new Date().getTime() < cachedCode.expired)
+    }
+  },
+
+  methods: {
+    sdkChecking () {
+      wx.checkJsApi({
+        jsApiList: [
+          'updateAppMessageShareData',
+          'addCard',
+          'openCard',
+          'onMenuShareAppMessage',
+          'onMenuShareTimeline'
+        ],
+        success (res) {
+          console.log('[SDK checking] :', res)
+        }
+      })
+    },
+    messageShare () {
+      // ! 分享给朋友（分享成功后无回调）
+      wx.updateAppMessageShareData({
+        title: '双旦送福利', // 分享标题
+        desc: '蛮牛云视双旦活动', // 分享描述
+        link: `http://22993k92h8.51mypc.cn:37148/#/activity?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64', // 分享图标
+        success (res) {
+          // 此处为监听 `分享` 的设置 **配置** 成功，而非 `分享成功` 的回调
+          console.info(
+            '[Message share]: activate "分享给朋友" listener !'
+          )
+        }
+      })
+    },
+    timelineShare () {
+      wx.onMenuShareTimeline({
+        // 分享标题
+        title: '双旦送福利',
+        // 分享链接，该链接域名或路径必须与当前页面对应的公众号 JS 安全域名一致
+        // 若不一致，那么自定义标题，图标将失效
+        link: `http://22993k92h8.51mypc.cn:37148/#/activity?source=${this.openid}`,
+        // 分享图标
+        imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64',
+        success () {
+        // 用户点击了分享后执行的回调函数
+          console.info('activate share !')
+        }
+      })
+
+      // ! 以下接口待官方修复，IOS 无法正常唤起
+      // wx.updateTimelineShareData({
+      //   title: '双旦送福利', // 分享标题
+      //   link: 'http://22993k92h8.51mypc.cn:37148/#/activity?code=011FWLJO0rzU042HRGFO0bIFJO0FWLJe', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+      //   imgUrl: 'https://assets-cdn.github.com/images/modules/site/integrators/google.png', // 分享图标
+      //   success (res) {
+      //     // 设置成功
+      //     console.info(
+      //       '[Timeline share]: activate "分享到朋友圈" listener !'
+      //     )
+      //   }
+      // })
     }
   },
 
@@ -77,7 +141,7 @@ export default {
           // 开启调试模式,调用的所有 api 的返回值会在客户端 alert 出来，若要查看传入
           // 的参数，可以在 pc 端打开，参数信息会通过 log 打出，仅在 pc 端时才会打
           // 印。
-          debug: !__DEV__,
+          // debug: process.env.NODE_ENV === 'development',
           appId, // 必填，公众号的唯一标识
           timestamp, // 必填，生成签名的时间戳
           nonceStr, // 必填，生成签名的随机串
@@ -89,48 +153,14 @@ export default {
           ] // 必填，需要使用的 JS 接口列表
         })
 
-        wx.ready(function () { // 需在用户可能点击分享按钮前就先调用
+        wx.ready(() => { // 需在用户可能点击分享按钮前就先调用
           console.info('WeiXin JS-SDK is activated !')
 
-          wx.checkJsApi({
-            jsApiList: [
-              'updateAppMessageShareData',
-              'addCard',
-              'openCard',
-              'onMenuShareAppMessage',
-              'onMenuShareTimeline'
-            ],
-            success (res) {
-              console.log('SDK checking :', res)
-            }
-          })
+          this.sdkChecking()
 
-          // ! 分享给朋友（分享成功后无回调）
-          wx.updateAppMessageShareData({
-            title: '双旦送福利', // 分享标题
-            desc: '蛮牛云视双旦活动', // 分享描述
-            // ! 添加主动分享者的 openid
-            link: 'http://22993k92h8.51mypc.cn:37148/#/activity?code=011FWLJO0rzU042HRGFO0bIFJO0FWLJe', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'https://assets-cdn.github.com/images/modules/site/integrators/google.png', // 分享图标
-            success (res) {
-              // 此处为监听 `分享` 的设置 **配置** 成功，而非 `分享成功` 的回调
-              console.info(
-                '[Message share]: activate "分享给朋友" listener !'
-              )
-            }
-          })
+          this.messageShare()
 
-          wx.updateTimelineShareData({
-            title: '双旦送福利', // 分享标题
-            link: 'http://22993k92h8.51mypc.cn:37148/#/activity?code=011FWLJO0rzU042HRGFO0bIFJO0FWLJe', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'https://assets-cdn.github.com/images/modules/site/integrators/google.png', // 分享图标
-            success (res) {
-              // 设置成功
-              console.info(
-                '[Timeline share]: activate "分享到朋友圈" listener !'
-              )
-            }
-          })
+          this.timelineShare()
 
           wx.error(console.error)
         })
@@ -141,4 +171,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.pages__activity {
+  width: 100vw;
+}
 </style>
