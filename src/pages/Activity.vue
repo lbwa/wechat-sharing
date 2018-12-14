@@ -64,7 +64,7 @@ export default {
       wx.updateAppMessageShareData({
         title: '双旦送福利', // 分享标题
         desc: '蛮牛云视双旦活动', // 分享描述
-        link: `http://22993k92h8.51mypc.cn:37148/#/activity?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        link: `http://22993k92h8.51mypc.cn:37148/#/home?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
         imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64', // 分享图标
         success (res) {
           // 此处为监听 `分享` 的设置 **配置** 成功，而非 `分享成功` 的回调
@@ -79,12 +79,15 @@ export default {
         // 分享标题
         title: '双旦送福利',
         // 分享链接，该链接域名或路径必须与当前页面对应的公众号 JS 安全域名一致
-        // 若不一致，那么自定义标题，图标将失效
-        link: `http://22993k92h8.51mypc.cn:37148/#/activity?source=${this.openid}`,
+        // ! 若不一致，那么自定义标题，图标将失效，故此处不能直接写成
+        // ! open.weixin..qq.com 的静默授权页面
+        // source 查询字符串将被缓存至 localStorage 中，以防重定向时丢失
+        link: `http://22993k92h8.51mypc.cn:37148/#/home?source=${this.openid}`,
         // 分享图标
         imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64',
         success () {
-        // 用户点击了分享后执行的回调函数
+          // 微信版本为 6.7.2 之后的将无法触发该回调函数
+          // 用户点击了分享后执行的回调函数
           console.info('activate share !')
         }
       })

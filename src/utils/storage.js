@@ -1,5 +1,6 @@
 const TOKEN_KEY = '__tk__'
 const CODE_KEY = '__code__'
+const SOURCE_KEY = '__src_openid__'
 
 function stringify (key, val, storage) {
   const normalize = typeof val === 'string'
@@ -25,3 +26,5 @@ function createStorageOperator (key, storage = window.localStorage) {
 export const tokenFromStorage = createStorageOperator(TOKEN_KEY, localStorage)
 
 export const codeFromStorage = createStorageOperator(CODE_KEY, localStorage)
+
+export const sourceFromStorage = createStorageOperator(SOURCE_KEY, localStorage)
