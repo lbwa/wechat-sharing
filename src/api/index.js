@@ -11,7 +11,7 @@ export function fetchAccessToken (code) {
   }))
 }
 
-export function fetchSDKAccess (url) {
+export function fetchSDKConfigSignature (url) {
   return fetch('http://10.12.16.114/api/signature', {
     method: 'POST',
     headers: {
@@ -19,6 +19,19 @@ export function fetchSDKAccess (url) {
     },
     body: JSON.stringify({
       url
+    })
+  })
+    .then(res => res.json())
+}
+
+export function fetchCardExt (cardId) {
+  return fetch('http://10.12.16.114/api/cardSignature', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      cardId
     })
   })
     .then(res => res.json())

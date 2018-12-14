@@ -3,7 +3,7 @@
     <code>current code: {{code}}</code>
     <p>current url: <strong>{{href}}</strong></p>
     <p>current openid: {{openid}}</p>
-    <ul class="activity__main">
+    <ul class="activity__list">
       <li
         :class="[
           'activity__list-item',
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { fetchAccessToken, fetchSDKAccess } from 'API'
+import { fetchAccessToken, fetchSDKConfigSignature, fetchCardExt } from 'API'
 import { codeFromStorage } from 'UTILS/storage'
 import wx from 'wx'
 
@@ -121,8 +121,41 @@ export default {
       // })
     },
     onAddCard (state, index) {
-      state.isActivated = true
-      // pX2-vjoU26cJ0BOHTZOSPbyokV7g
+      // 自创：pBeeY1LHUdGK15JxCsrY4MD53D2I
+      // 后台：pX2-vjoU26cJ0BOHTZOSPbyokV7g
+
+      !state.isActivated && fetchCardExt('pBeeY1P31dWA-GFAP8Puzm0TFgs0')
+        .then(res => {
+          return {
+            nonceStr: res.nonceStr,
+            signature: res.signature,
+            timestamp: res.timestamp
+          }
+        })
+        .then(this.addCardToBags)
+        .then(() => { state.isActivated = true })
+    },
+    addCardToBags ({ nonceStr, signature, timestamp }) {
+      // 需要添加的卡券列表
+      wx.addCard({
+        cardList: [{
+          cardId: 'pBeeY1GHvqM4Qhc6Xo1kdmWSNkBc',
+          cardExt: JSON.stringify({
+            nonceStr,
+            signature,
+            timestamp
+          })
+        }],
+        success (res) {
+          console.log('%c [Add card success] :', 'color: red;', res)
+        },
+        complete (res) {
+          console.log('%c [Add card complete] :', 'color: red;', res)
+        },
+        fail (res) {
+          console.log('%c [Add card fail] :', 'color: red;', res)
+        }
+      })
     }
   },
 
@@ -151,7 +184,7 @@ export default {
     const SDKReferenceURL = window.location.href
       .split('#')[0]
 
-    fetchSDKAccess(SDKReferenceURL)
+    fetchSDKConfigSignature(SDKReferenceURL)
       .then(({
         appId,
         nonceStr,
@@ -170,6 +203,7 @@ export default {
           signature, // 必填，签名
           jsApiList: [
             'updateAppMessageShareData',
+            'onMenuShareTimeline',
             'addCard',
             'openCard'
           ] // 必填，需要使用的 JS 接口列表
@@ -195,5 +229,19 @@ export default {
 <style lang='scss' scoped>
 .pages__activity {
   width: 100vw;
+
+  .activity__list {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+
+    &-item {
+      padding: 10px 0;
+    }
+
+    .is-activated {
+      color: #b8b8b8;
+    }
+  }
 }
 </style>
