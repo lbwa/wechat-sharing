@@ -1,9 +1,21 @@
 <template>
   <section class="pages__activity">
-    <p>这是活动正文内容</p>
     <code>current code: {{code}}</code>
     <p>current url: <strong>{{href}}</strong></p>
     <p>current openid: {{openid}}</p>
+    <ul class="activity__main">
+      <li
+        :class="[
+          'activity__list-item',
+          state.isActivated ? 'is-activated' : ''
+        ]"
+        v-for="(state, index) of redBags"
+        :key="index"
+        @click="onAddCard(state, index)"
+      >
+        5 元，有效期至 2019.01.07
+      </li>
+    </ul>
   </section>
 </template>
 
@@ -17,6 +29,9 @@ export default {
 
   data () {
     return {
+      redBags: Array(5).fill(false).map(item => ({
+        isActivated: false
+      })),
       accessToken: '',
       // 用户唯一标识，请注意，在未关注公众号时，用户访问公众号的网页，也会产生一个用户
       // 和公众号唯一的 openid（详见链接 **第二步** 返回数据参数中的描述）
@@ -104,6 +119,10 @@ export default {
       //     )
       //   }
       // })
+    },
+    onAddCard (state, index) {
+      state.isActivated = true
+      // pX2-vjoU26cJ0BOHTZOSPbyokV7g
     }
   },
 
