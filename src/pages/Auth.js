@@ -4,6 +4,9 @@ export default {
     // 分离 url 中的 code 查询字符串
     code () {
       return location.href.replace('?', '').split('&')[0].split('=')[1] || ''
+    },
+    isDevMode () {
+      return process.env.NODE_ENV === 'development'
     }
   },
 
@@ -21,6 +24,8 @@ export default {
   },
 
   render (h) {
-    return h('section', `current code is ${this.code}`)
+    return (
+      <section>{this.isDevMode && this.code}</section>
+    )
   }
 }
