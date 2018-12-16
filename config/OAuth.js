@@ -28,3 +28,7 @@ const PROD_CONFIG = {
 export default __DEV__ ? DEV_CONFIG : PROD_CONFIG
 
 export const CODE_TEMPLATE = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect'
+
+export const CARD_IDS = {
+  CASH: 'pX2-vjgh2D4ChXHw_3k9vNB2vRXw'
+}

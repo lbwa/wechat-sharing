@@ -20,8 +20,13 @@
 </template>
 
 <script>
+/*
+ * 在进入此页时，若是 B 用户点击了 A 用户分享的链接，那么在当前 localStorage 中存在
+ * __src_openid__ 为 A 用户的 openid，此 openid 用于主动推送给 A 用户分享卡券
+ */
 import { fetchAccessToken, fetchSDKConfigSignature, fetchCardExt } from 'API'
 import { codeFromStorage } from 'UTILS/storage'
+import { CARD_IDS } from 'OAUTH'
 import wx from 'wx'
 
 export default {
@@ -79,6 +84,7 @@ export default {
       wx.updateAppMessageShareData({
         title: '双旦送福利', // 分享标题
         desc: '蛮牛云视双旦活动', // 分享描述
+        // 主动分享的用户，通过 卡券推送 来实现获得奖励代金券，而不是 JS-SDK
         link: `http://22993k92h8.51mypc.cn:37148/#/home?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
         imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64', // 分享图标
         success (res) {
@@ -93,6 +99,7 @@ export default {
       wx.onMenuShareTimeline({
         // 分享标题
         title: '双旦送福利',
+        // 主动分享的用户，通过 `卡券推送` 来实现获得奖励代金券，而不是 JS-SDK
         // 分享链接，该链接域名或路径必须与当前页面对应的公众号 JS 安全域名一致
         // ! 若不一致，那么自定义标题，图标将失效，故此处不能直接写成
         // ! open.weixin..qq.com 的静默授权页面
@@ -121,39 +128,32 @@ export default {
       // })
     },
     onAddCard (state, index) {
-      // 自创：pBeeY1LHUdGK15JxCsrY4MD53D2I
-      // 后台：pX2-vjoU26cJ0BOHTZOSPbyokV7g
-
-      !state.isActivated && fetchCardExt('pBeeY1P31dWA-GFAP8Puzm0TFgs0')
-        .then(res => {
-          return {
-            nonceStr: res.nonceStr,
-            signature: res.signature,
-            timestamp: res.timestamp
-          }
-        })
+      const cardId = CARD_IDS.CASH
+      !state.isActivated && fetchCardExt(cardId)
+        .then(res => ({
+          cardId,
+          nonceStr: res.nonceStr,
+          signature: res.signature,
+          timestamp: res.timestamp
+        }))
         .then(this.addCardToBags)
         .then(() => { state.isActivated = true })
     },
-    addCardToBags ({ nonceStr, signature, timestamp }) {
-      // 需要添加的卡券列表
+    addCardToBags ({ cardId, nonceStr, signature, timestamp }) {
+      // ! 确认config中 nonceStr（js 中驼峰标准大写S）, timestamp 与用以签名中的对
+      // 应 nonceStr, timestamp 一致。
       wx.addCard({
+        // 需要添加的卡券列表
         cardList: [{
-          cardId: 'pBeeY1GHvqM4Qhc6Xo1kdmWSNkBc',
+          cardId,
           cardExt: JSON.stringify({
-            nonceStr,
+            nonce_str: nonceStr,
             signature,
             timestamp
           })
         }],
-        success (res) {
-          console.log('%c [Add card success] :', 'color: red;', res)
-        },
         complete (res) {
           console.log('%c [Add card complete] :', 'color: red;', res)
-        },
-        fail (res) {
-          console.log('%c [Add card fail] :', 'color: red;', res)
         }
       })
     }
@@ -185,6 +185,8 @@ export default {
       .split('#')[0]
 
     fetchSDKConfigSignature(SDKReferenceURL)
+      // ! 确认config中 nonceStr（js 中驼峰标准大写S）, timestamp 与用以签名中的对
+      // 应 nonce_str, timestamp 一致。
       .then(({
         appId,
         nonceStr,
