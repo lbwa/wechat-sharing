@@ -133,27 +133,19 @@ export default {
     onAddCard (state, index) {
       const cardId = CARD_IDS.CASH
       !state.isActivated && fetchCardExt(cardId, this.nonceStr, this.timestamp)
-        .then(res => ({
+        .then(({ cardExt }) => ({
           cardId,
-          nonceStr: res.nonceStr,
-          signature: res.signature,
-          timestamp: res.timestamp
+          cardExt
         }))
         .then(this.addCardToBags)
         .then(() => { state.isActivated = true })
     },
-    addCardToBags ({ cardId, cardSignature }) {
-      // ! 确认config中 nonceStr（js 中驼峰标准大写S）, timestamp 与用以签名中的对
-      // 应 nonceStr, timestamp 一致。
+    addCardToBags ({ cardId, cardExt }) {
       wx.addCard({
         // 需要添加的卡券列表
         cardList: [{
           cardId,
-          cardExt: JSON.stringify({
-            nonce_str: this.nonceStr,
-            timestamp: this.timestamp,
-            signature: cardSignature
-          })
+          cardExt
         }],
         complete (res) {
           console.log('%c [Add card complete] :', 'color: red;', res)

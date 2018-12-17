@@ -23,13 +23,9 @@ export function fetchSDKConfigSignature (url) {
 /**
  * @description 使用参数获取，特定卡号的 signature，以用于 wx.addCard 中分发卡券
  * @param {String} cardId 需要被添加的卡券
- * @param {String} nonceStr 在 wx.config 中使用过的 后端响应的 自定义字符串
- * @param {Number} timestamp 在 wx.config 中使用过的 后端响应的 时间戳
  */
-export function fetchCardExt (cardId, nonceStr, timestamp) {
+export function fetchCardExt (cardId) {
   return sdkRequest.post(sdkRoutes.CARD_SIGNATURE, JSON.stringify({
-    cardId,
-    nonceStr,
-    timestamp
+    cardId
   }))
 }

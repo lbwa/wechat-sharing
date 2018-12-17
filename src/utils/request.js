@@ -37,9 +37,10 @@ function createBasicRequest (baseURL) {
   })
 
   request.interceptors.response.use(({ data }) => {
-    return data.code !== 2000
-      ? Promise.reject(data)
-      : data
+    // return data.code !== 2000
+    //   ? Promise.reject(data)
+    //   : data
+    return data
   }, err => {
     err && console.error(`[Response error]: ${err}`)
     return Promise.reject(err)
