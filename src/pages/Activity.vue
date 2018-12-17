@@ -88,7 +88,7 @@ export default {
         title: '双旦送福利', // 分享标题
         desc: '蛮牛云视双旦活动', // 分享描述
         // 主动分享的用户，通过 卡券推送 来实现获得奖励代金券，而不是 JS-SDK
-        link: `http://22993k92h8.51mypc.cn:37148/#/home?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        link: `${process.env.VUE_APP_ACTIVITY_BASE_URL}/#/home?source=${this.openid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
         imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64', // 分享图标
         success (res) {
           // 此处为监听 `分享` 的设置 **配置** 成功，而非 `分享成功` 的回调
@@ -107,7 +107,7 @@ export default {
         // ! 若不一致，那么自定义标题，图标将失效，故此处不能直接写成
         // ! open.weixin..qq.com 的静默授权页面
         // source 查询字符串将被缓存至 localStorage 中，以防重定向时丢失
-        link: `http://22993k92h8.51mypc.cn:37148/#/home?source=${this.openid}`,
+        link: `${process.env.VUE_APP_ACTIVITY_BASE_URL}/#/home?source=${this.openid}`,
         // 分享图标
         imgUrl: 'http://wx.qlogo.cn/mmopen/ylRhrSjQb8gL3fmcoJAjS1CCPYn0Z974N6C1mzXyVICWEGkm1PobL926uCvzLWW8YrgEJju2qNg47y6l3Kmja993libS8hEFQ/64',
         success () {
@@ -120,7 +120,7 @@ export default {
       // ! 以下接口待官方修复，IOS 无法正常唤起
       // wx.updateTimelineShareData({
       //   title: '双旦送福利', // 分享标题
-      //   link: 'http://22993k92h8.51mypc.cn:37148/#/activity?code=011FWLJO0rzU042HRGFO0bIFJO0FWLJe', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+      //   link: '${process.env.VUE_APP_ACTIVITY_BASE_URL}/#/activity?code=011FWLJO0rzU042HRGFO0bIFJO0FWLJe', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
       //   imgUrl: 'https://assets-cdn.github.com/images/modules/site/integrators/google.png', // 分享图标
       //   success (res) {
       //     // 设置成功
@@ -191,8 +191,6 @@ export default {
       }) => {
         this.nonceStr = nonceStr
         this.timestamp = timestamp
-
-        console.log('%c this.nonceStr, this.timestamp :', 'color: red', this.nonceStr, this.timestamp)
 
         wx.config({
           // 开启调试模式,调用的所有 api 的返回值会在客户端 alert 出来，若要查看传入
