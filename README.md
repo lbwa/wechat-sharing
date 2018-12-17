@@ -14,7 +14,7 @@
 
 [公众号管理平台]:https://mp.weixin.qq.com/
 
-[微信公众平台接口测试帐号]:https://mp.weixin.qq.com/debug/cgi-bin/sandbox
+[微信公众平台接口测试帐号]:https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
 
 [微信公众平台接口调试工具]:https://mp.weixin.qq.com/debug/cgi-bin/apiinfo
 
