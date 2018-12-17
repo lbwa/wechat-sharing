@@ -105,7 +105,7 @@ export default {
         // 主动分享的用户，通过 `卡券推送` 来实现获得奖励代金券，而不是 JS-SDK
         // 分享链接，该链接域名或路径必须与当前页面对应的公众号 JS 安全域名一致
         // ! 若不一致，那么自定义标题，图标将失效，故此处不能直接写成
-        // ! open.weixin..qq.com 的静默授权页面
+        // ! open.weixin.qq.com 的静默授权页面
         // source 查询字符串将被缓存至 localStorage 中，以防重定向时丢失
         link: `${process.env.VUE_APP_ACTIVITY_BASE_URL}/#/home?source=${this.openid}`,
         // 分享图标

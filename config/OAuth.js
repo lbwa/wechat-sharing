@@ -33,5 +33,5 @@ export const CARD_IDS = {
   // ! 仅能使用 https://api.weixin.qq.com/card/create?access_token=TOKEN 下创建的
   // 的卡券，即不能使用 微信商户后台创建的代金券，微信商户后台的代金券的发放属于微信支
   // 付的接口，而不是 微信网页开发中的 JS-SDK
-  CASH: 'pBeeY1JqMNNjwsNsIqEkFmfPplAg'
+  CASH: 'pBeeY1EArQluHx8dH-kSdVsRHvoI'
 }
