@@ -1,9 +1,12 @@
-import request from 'UTILS/request'
-import routes from './routes'
+import createBasicRequest from 'UTILS/request'
+import { tokenRoutes, sdkRoutes } from './routes'
 import WE_CHAT_CONFIG from 'OAUTH'
 
+const tokenRequest = createBasicRequest(process.env.VUE_APP_TOKEN_BASE_REQUEST)
+const sdkRequest = createBasicRequest(process.env.VUE_APP_SDK_BASE_REQUEST)
+
 export function fetchAccessToken (code) {
-  return request.post(routes.ACCESS_TOKEN, JSON.stringify({
+  return tokenRequest.post(tokenRoutes.ACCESS_TOKEN, JSON.stringify({
     code,
     appid: WE_CHAT_CONFIG.APP_ID,
     secret: WE_CHAT_CONFIG.APP_SECRET,
@@ -12,16 +15,9 @@ export function fetchAccessToken (code) {
 }
 
 export function fetchSDKConfigSignature (url) {
-  return fetch('http://10.12.16.114/api/signature', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      url
-    })
-  })
-    .then(res => res.json())
+  return sdkRequest.post(sdkRoutes.SIGNATURE, JSON.stringify({
+    url
+  }))
 }
 
 /**
@@ -31,16 +27,9 @@ export function fetchSDKConfigSignature (url) {
  * @param {Number} timestamp 在 wx.config 中使用过的 后端响应的 时间戳
  */
 export function fetchCardExt (cardId, nonceStr, timestamp) {
-  return fetch('http://10.12.16.114/api/cardSignature', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      cardId,
-      nonceStr,
-      timestamp
-    })
-  })
-    .then(res => res.json())
+  return sdkRequest.post(sdkRoutes.CARD_SIGNATURE, JSON.stringify({
+    cardId,
+    nonceStr,
+    timestamp
+  }))
 }
