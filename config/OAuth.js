@@ -30,5 +30,8 @@ export default __DEV__ ? DEV_CONFIG : PROD_CONFIG
 export const CODE_TEMPLATE = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect'
 
 export const CARD_IDS = {
-  CASH: 'pX2-vjgh2D4ChXHw_3k9vNB2vRXw'
+  // ! 仅能使用 https://api.weixin.qq.com/card/create?access_token=TOKEN 下创建的
+  // 的卡券，即不能使用 微信商户后台创建的代金券，微信商户后台的代金券的发放属于微信支
+  // 付的接口，而不是 微信网页开发中的 JS-SDK
+  CASH: 'pBeeY1JqMNNjwsNsIqEkFmfPplAg'
 }

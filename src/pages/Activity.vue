@@ -42,7 +42,10 @@ export default {
       // 和公众号唯一的 openid（详见链接 **第二步** 返回数据参数中的描述）
       // https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140842
       openid: '',
-      href: window.location.href
+      href: window.location.href,
+      // wx.config 与 wx.addCard 中使用的 nonceStr 和 timestamp 必须一致
+      nonceStr: '',
+      timestamp: 0
     }
   },
 
@@ -129,7 +132,7 @@ export default {
     },
     onAddCard (state, index) {
       const cardId = CARD_IDS.CASH
-      !state.isActivated && fetchCardExt(cardId)
+      !state.isActivated && fetchCardExt(cardId, this.nonceStr, this.timestamp)
         .then(res => ({
           cardId,
           nonceStr: res.nonceStr,
@@ -139,7 +142,7 @@ export default {
         .then(this.addCardToBags)
         .then(() => { state.isActivated = true })
     },
-    addCardToBags ({ cardId, nonceStr, signature, timestamp }) {
+    addCardToBags ({ cardId, cardSignature }) {
       // ! 确认config中 nonceStr（js 中驼峰标准大写S）, timestamp 与用以签名中的对
       // 应 nonceStr, timestamp 一致。
       wx.addCard({
@@ -147,9 +150,9 @@ export default {
         cardList: [{
           cardId,
           cardExt: JSON.stringify({
-            nonce_str: nonceStr,
-            signature,
-            timestamp
+            nonce_str: this.nonceStr,
+            timestamp: this.timestamp,
+            signature: cardSignature
           })
         }],
         complete (res) {
@@ -194,6 +197,11 @@ export default {
         timestamp,
         url
       }) => {
+        this.nonceStr = nonceStr
+        this.timestamp = timestamp
+
+        console.log('%c this.nonceStr, this.timestamp :', 'color: red', this.nonceStr, this.timestamp)
+
         wx.config({
           // 开启调试模式,调用的所有 api 的返回值会在客户端 alert 出来，若要查看传入
           // 的参数，可以在 pc 端打开，参数信息会通过 log 打出，仅在 pc 端时才会打
